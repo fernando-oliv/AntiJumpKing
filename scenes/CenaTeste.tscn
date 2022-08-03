@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://sprites/background.png" type="Texture" id=1]
+[ext_resource path="res://sprites/player-sprite-v2.png" type="Texture" id=2]
+[ext_resource path="res://scripts/PlayerMovement.gd" type="Script" id=3]
+
+[node name="CenaTeste" type="Node2D"]
+
+[node name="Background" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Player" type="Node2D" parent="."]
+position = Vector2( 92, 80 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Player-sprite-v2" type="Sprite" parent="Player"]
+texture = ExtResource( 2 )
+
+[node name="area" type="Area2D" parent="Player"]
