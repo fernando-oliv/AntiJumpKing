@@ -15,13 +15,13 @@ texture = ExtResource( 1 )
 centered = false
 
 [node name="Player" type="Node2D" parent="."]
-position = Vector2( 127, 53 )
+position = Vector2( 82, 23 )
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_group_": true
 }
 
-[node name="Player-sprite-v2" type="Sprite" parent="Player"]
+[node name="sprite" type="Sprite" parent="Player"]
 scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 
@@ -33,13 +33,16 @@ position = Vector2( 0, 7 )
 shape = SubResource( 1 )
 
 [node name="Chao" parent="." instance=ExtResource( 4 )]
-position = Vector2( 84, 73 )
+position = Vector2( 31, 87 )
 
 [node name="Chao2" parent="." instance=ExtResource( 4 )]
-position = Vector2( 132, 68 )
+position = Vector2( 84, 41 )
 
 [node name="Chao3" parent="." instance=ExtResource( 4 )]
-position = Vector2( 37, 93 )
+position = Vector2( 88, 86 )
+
+[node name="Chao4" parent="." instance=ExtResource( 4 )]
+position = Vector2( 145, 90 )
 
 [connection signal="area_entered" from="Player/area" to="Player" method="_on_area_area_entered"]
 [connection signal="area_exited" from="Player/area" to="Player" method="_on_area_area_exited"]
