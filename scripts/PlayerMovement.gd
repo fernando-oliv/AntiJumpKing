@@ -1,67 +1,92 @@
-extends Node2D
+extends KinematicBody2D
 
-var velocidadeX = 0
-var speed = 70
-var velocidadeY = 0
-var gravity = 1.5
+var velocidade = Vector2.ZERO
+var speed = 5
+var gravity = 10
 var dashTime = 0
 var fallingTime = 0
 var falling = true
-var dashing = false
-var haveDash = true
 var isFacingRight = true
 
+#bout dash 
+var dashDirection = Vector2(1,0)
+var haveDash = true
+var dashing = false
+
 func _ready():
-	pass # Replace with function body.
+	pass
 
 
 
 func _process(delta):
 	pass
+	
 
+#faz o personagem andar se não estiver caindo
+func get_input():
+	var right = Input.is_action_pressed('ui_right')
+	var left = Input.is_action_pressed('ui_left')
+	
+	if (right && !falling):
+		velocidade.x += speed
+	if (left && !falling):
+		velocidade.x -= speed
+		
+# funcao de dash do player 
+func dash():
+	if is_on_floor():
+		haveDash = true
+		
+	# define a direcao 
+	if Input.is_action_pressed("ui_right"):
+		dashDirection = Vector2(1,0)
+	if Input.is_action_pressed("ui_left"):
+		dashDirection = Vector2(-1,0)
+		
+	if Input.is_action_just_pressed("ui_accept") and haveDash:
+		velocidade = dashDirection.normalized() * 100
+		haveDash = false 
+		dashing = true 
+	"""
+	se o individuo der dash em uma ponta, ou seja, no chao em direcao ao ar, 
+	é possivel dar 2 dashs, pois ele reseta uma vez que ele ainda nao estava no ar
+	"""
 
 func _physics_process(delta):
-	
-	if (falling) :
-		fallingTime += 3*delta
-		velocidadeY += gravity/40 * pow(fallingTime, 2)
-	else :
-		velocidadeX = 0
-		velocidadeY = 0
-		haveDash = true
+	"""
+	lentamente faz o personagem retornar a velocidade x = 0
+	pode ser usado para gelo ou só para ficar mais condizente com a realidade
+	"""
+	velocidade.x = lerp(velocidade.x, 0, 0.05)
 
+	
+	velocidade.y += gravity
+	
+	# movimentacao
+	get_input()
+	if is_on_floor():
+		#print("I collided")
+		falling = false
+	else:
+		falling = true
+	velocidade = move_and_slide(velocidade, Vector2(0, -1))
+	
 	#recarrega a cena apertando ESC
 	if(Input.is_action_just_pressed("ui_cancel")) :
 		return get_tree().reload_current_scene()
 
-	#faz o personagem andar se não estiver caindo
-	if (Input.is_action_pressed("ui_left") && !falling) :
-		velocidadeX += -1
-	#mesma coisa do if de cima
-	if (Input.is_action_pressed("ui_right") && !falling) :
-		velocidadeX += 1
-
-	if (isFacingRight && velocidadeX < 0) || (!isFacingRight && velocidadeX > 0):
+	# para onde o player olha ( depende da velocidade)
+	if (isFacingRight && velocidade.x < 0) || (!isFacingRight && velocidade.x > 0):
 		FlipPlayer()
 	
 	#apertou dash
-	if (Input.is_action_just_pressed("ui_accept") && haveDash == true):
-		haveDash = false
-		velocidadeY = 0
-		dashing = true
-		if (Input.is_action_pressed("ui_left")):
-			velocidadeX = -2
-		else :
-			velocidadeX = 2
-		print("apertou")
+	dash()
 
 	#soltou o dash
 	if (Input.is_action_just_released("ui_accept") && dashing) :
 		dashing = false
 		dashTime = 0
-		velocidadeX = 0
-		if (falling):
-			velocidadeY = 0.5
+		velocidade.x = 0
 		fallingTime = 0
 
 	#segurou o dash
@@ -69,28 +94,16 @@ func _physics_process(delta):
 		fallingTime = 0
 		dashTime += delta
 		if (dashTime < 0.13 * 1.15):
-			velocidadeY = 0
-			if (velocidadeX >= 0):
-				velocidadeX += 0.5
+			velocidade.y = 0
+			if (velocidade.x >= 0):
+				velocidade.x += 50
 			else :
-				velocidadeX += -0.5
+				velocidade.x += -50
 		else :
 			dashing = false
-			velocidadeX = 0
-
+			velocidade.x = 0
 	
-	translate(Vector2(velocidadeX * speed * delta, velocidadeY)) 
-
-func _on_area_area_entered(area):
-	falling = false
-	haveDash = true
-	#if area.name.begins_with("paredes"):
-	#	colidiu?
-
-
-func _on_area_area_exited(_area):
-	falling = true
-	velocidadeY = 0.5
+	
 
 func FlipPlayer():
 		isFacingRight = !isFacingRight;
