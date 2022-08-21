@@ -3,15 +3,18 @@ extends KinematicBody2D
 var velocidade = Vector2.ZERO
 var speed = 5
 var gravity = 10
-var dashTime = 0
 var fallingTime = 0
 var falling = true
 var isFacingRight = true
 
 #bout dash 
 var dashDirection = Vector2(1,0)
+var dashTime = 0 
 var haveDash = true
 var dashing = false
+var dashSpeed = 50
+
+var velocidadeAnterior = velocidade
 
 func _ready():
 	pass
@@ -53,6 +56,18 @@ func dash():
 	"""
 
 func _physics_process(delta):
+	
+	"""bounce"""
+	var velocidadeAnterior = Vector2(dashSpeed,0)
+	if velocidade.x != 0:
+		velocidadeAnterior = velocidade.x 
+		for i in range(get_slide_count()):
+			var collision = get_slide_collision(i)
+			if collision.collider is TileMap and not is_on_floor():
+				velocidade.x = collision.normal.x*abs(velocidadeAnterior)*0.6
+				dashing = true 
+	
+				
 	"""
 	lentamente faz o personagem retornar a velocidade x = 0
 	pode ser usado para gelo ou só para ficar mais condizente com a realidade
@@ -70,7 +85,7 @@ func _physics_process(delta):
 	else:
 		falling = true
 	velocidade = move_and_slide(velocidade, Vector2(0, -1))
-	
+	#velocidade = move_and_slide(velocidade, Vector2(0,1))
 	#recarrega a cena apertando ESC
 	if(Input.is_action_just_pressed("ui_cancel")) :
 		return get_tree().reload_current_scene()
@@ -92,14 +107,15 @@ func _physics_process(delta):
 	#segurou o dash
 	if (dashing):
 		fallingTime = 0
-		dashTime += delta
 		if (dashTime < 0.13 * 1.15):
+			dashTime += delta
 			velocidade.y = 0
 			if (velocidade.x >= 0):
-				velocidade.x += 50
-			else :
-				velocidade.x += -50
+				velocidade.x += dashSpeed
+			elif (velocidade.x <= 0) :
+				velocidade.x += -dashSpeed
 		else :
+			dashTime = 0
 			dashing = false
 			velocidade.x = 0
 	
