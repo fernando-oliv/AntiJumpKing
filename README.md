@@ -28,4 +28,4 @@ Tudo
 ### Game Design:
 
 ### Arte:
-Artes iniciais de alguns tiles
+1. Artes iniciais de alguns tiles
