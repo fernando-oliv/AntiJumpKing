@@ -6,6 +6,7 @@ var gravity = 10
 var fallingTime = 0
 var falling = true
 var isFacingRight = true
+var vento = 0
 
 #bout dash 
 var dashDirection = Vector2(1,0)
@@ -66,7 +67,7 @@ func _physics_process(delta):
 			if collision.collider is TileMap and not is_on_floor():
 				velocidade.x = collision.normal.x*abs(velocidadeAnterior)*0.6
 				dashing = true 
-	
+
 				
 	"""
 	lentamente faz o personagem retornar a velocidade x = 0
@@ -75,24 +76,22 @@ func _physics_process(delta):
 	velocidade.x = lerp(velocidade.x, 0, 0.05)
 
 	
-	velocidade.y += gravity
 	
 	# movimentacao
 	get_input()
 	if is_on_floor():
 		#print("I collided")
 		falling = false
+		velocidade.y = 0
 	else:
 		falling = true
-	velocidade = move_and_slide(velocidade, Vector2(0, -1))
-	#velocidade = move_and_slide(velocidade, Vector2(0,1))
-	#recarrega a cena apertando ESC
-	if(Input.is_action_just_pressed("ui_cancel")) :
-		return get_tree().reload_current_scene()
-
-	# para onde o player olha ( depende da velocidade)
-	if (isFacingRight && velocidade.x < 0) || (!isFacingRight && velocidade.x > 0):
-		FlipPlayer()
+		fallingTime += delta
+		
+		#aplica o vento até um limite de 20
+		if abs(velocidade.x) < 20:
+			velocidade.x += vento
+	
+	velocidade.y += gravity * fallingTime
 	
 	#apertou dash
 	dash()
@@ -119,9 +118,33 @@ func _physics_process(delta):
 			dashing = false
 			velocidade.x = 0
 	
+
+	velocidade = move_and_slide(velocidade, Vector2.UP)
+	#velocidade = move_and_slide(velocidade, Vector2(0,1))
+	#recarrega a cena apertando ESC
+	if(Input.is_action_just_pressed("ui_cancel")) :
+		return get_tree().reload_current_scene()
+
+	# para onde o player olha ( depende da velocidade)
+	if (isFacingRight && velocidade.x < 0) || (!isFacingRight && velocidade.x > 0):
+		FlipPlayer()
 	
+
 
 func FlipPlayer():
 		isFacingRight = !isFacingRight;
 		get_node("sprite").set_flip_h(!isFacingRight)
 	
+
+
+#seta o vento quando entra em uma area que começa com o nome VentoDir ou VentoEsq
+func _on_Area2D_area_entered(area):
+	if area.get_parent().name.begins_with("VentoDir"):
+		vento = 5
+	if area.get_parent().name.begins_with("VentoEsq"):
+		vento = -5
+
+#retorna o vento para 0 ao deixar a área
+func _on_Area2D_area_exited(area):
+	if area.get_parent().name.begins_with("Vento"):
+		vento = 0

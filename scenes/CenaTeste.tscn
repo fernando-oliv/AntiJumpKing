@@ -1,12 +1,13 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://sprites/background.png" type="Texture" id=1]
 [ext_resource path="res://sprites/player-sprite-v2.png" type="Texture" id=2]
 [ext_resource path="res://scripts/PlayerMovement.gd" type="Script" id=3]
 [ext_resource path="res://scenes/Chao.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/Vento.tscn" type="PackedScene" id=5]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 4, 1 )
+extents = Vector2( 4.5, 8 )
 
 [node name="CenaTeste" type="Node2D"]
 
@@ -14,26 +15,13 @@ extents = Vector2( 4, 1 )
 texture = ExtResource( 1 )
 centered = false
 
-[node name="Player" type="Node2D" parent="."]
-position = Vector2( 82, 23 )
-script = ExtResource( 3 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="sprite" type="Sprite" parent="Player"]
-scale = Vector2( 0.5, 0.5 )
-texture = ExtResource( 2 )
-
-[node name="area" type="Area2D" parent="Player"]
-collision_mask = 2
-
-[node name="pe" type="CollisionShape2D" parent="Player/area"]
-position = Vector2( 0, 7 )
-shape = SubResource( 1 )
+[node name="VentoDir" parent="." instance=ExtResource( 5 )]
 
 [node name="Chao" parent="." instance=ExtResource( 4 )]
 position = Vector2( 31, 87 )
+
+[node name="Chao5" parent="." instance=ExtResource( 4 )]
+position = Vector2( 132, 38 )
 
 [node name="Chao2" parent="." instance=ExtResource( 4 )]
 position = Vector2( 84, 41 )
@@ -44,5 +32,26 @@ position = Vector2( 88, 86 )
 [node name="Chao4" parent="." instance=ExtResource( 4 )]
 position = Vector2( 145, 90 )
 
-[connection signal="area_entered" from="Player/area" to="Player" method="_on_area_area_entered"]
-[connection signal="area_exited" from="Player/area" to="Player" method="_on_area_area_exited"]
+[node name="KinematicBody2D" type="KinematicBody2D" parent="."]
+position = Vector2( 83, 15 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="sprite" type="Sprite" parent="KinematicBody2D"]
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
+position = Vector2( -0.5, 0 )
+shape = SubResource( 1 )
+
+[node name="Area2D" type="Area2D" parent="KinematicBody2D"]
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="KinematicBody2D/Area2D"]
+position = Vector2( -0.5, 0 )
+shape = SubResource( 1 )
+
+[connection signal="area_entered" from="KinematicBody2D/Area2D" to="KinematicBody2D" method="_on_Area2D_area_entered"]
+[connection signal="area_exited" from="KinematicBody2D/Area2D" to="KinematicBody2D" method="_on_Area2D_area_exited"]
