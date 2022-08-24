@@ -13,9 +13,9 @@ Possíveis inimigos ou mecânicas de empurrar de volta?
 Tudo
 
 ### Arte:
-1.Sprite do player
-2.TileMaps
-3.Background
+1. Sprite do player
+2. TileMaps
+3. Background
 
 
 ## Feito:
