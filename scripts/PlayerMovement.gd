@@ -47,7 +47,7 @@ func dash():
 	if Input.is_action_pressed("ui_left"):
 		dashDirection = Vector2(-1,0)
 		
-	if Input.is_action_just_pressed("ui_accept") and haveDash:
+	if Input.is_action_just_pressed("Dash") and haveDash:
 		velocidade = dashDirection.normalized() * 100
 		haveDash = false 
 		dashing = true 
@@ -73,7 +73,8 @@ func _physics_process(delta):
 	lentamente faz o personagem retornar a velocidade x = 0
 	pode ser usado para gelo ou só para ficar mais condizente com a realidade
 	"""
-	velocidade.x = lerp(velocidade.x, 0, 0.05)
+	if(!falling):
+		velocidade.x = lerp(velocidade.x, 0, 0.05)
 
 	
 	
@@ -82,6 +83,7 @@ func _physics_process(delta):
 	if is_on_floor():
 		#print("I collided")
 		falling = false
+		fallingTime = 0
 		velocidade.y = 0
 	else:
 		falling = true
@@ -97,7 +99,7 @@ func _physics_process(delta):
 	dash()
 
 	#soltou o dash
-	if (Input.is_action_just_released("ui_accept") && dashing) :
+	if (Input.is_action_just_released("Dash") && dashing) :
 		dashing = false
 		dashTime = 0
 		velocidade.x = 0
@@ -117,6 +119,8 @@ func _physics_process(delta):
 			dashTime = 0
 			dashing = false
 			velocidade.x = 0
+	if(!falling and Input.is_action_just_pressed("Jump")):
+		velocidade.y = -75
 	
 
 	velocidade = move_and_slide(velocidade, Vector2.UP)
