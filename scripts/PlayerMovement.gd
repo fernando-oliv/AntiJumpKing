@@ -7,6 +7,7 @@ var fallingTime = 0
 var falling = true
 var isFacingRight = true
 var vento = 0
+var inversao = 1
 
 #bout dash 
 var dashDirection = Vector2(1,0)
@@ -48,6 +49,8 @@ func dash():
 		dashDirection = Vector2(-1,0)
 		
 	if Input.is_action_just_pressed("Dash") and haveDash:
+		if (!falling):
+			dashDirection.y = 1 * inversao
 		velocidade = dashDirection.normalized() * 100
 		haveDash = false 
 		dashing = true 
@@ -64,9 +67,10 @@ func _physics_process(delta):
 		velocidadeAnterior = velocidade.x 
 		for i in range(get_slide_count()):
 			var collision = get_slide_collision(i)
-			if collision.collider is TileMap and not is_on_floor():
+			print(collision.collider.get_class())
+			if (collision.collider is TileMap) and falling:
 				velocidade.x = collision.normal.x*abs(velocidadeAnterior)*0.6
-				dashing = true 
+				
 
 				
 	"""
@@ -93,7 +97,7 @@ func _physics_process(delta):
 		if abs(velocidade.x) < 20:
 			velocidade.x += vento
 	
-	velocidade.y += gravity * fallingTime
+	velocidade.y += gravity * fallingTime * inversao
 	
 	#apertou dash
 	dash()
@@ -120,10 +124,11 @@ func _physics_process(delta):
 			dashing = false
 			velocidade.x = 0
 	if(!falling and Input.is_action_just_pressed("Jump")):
-		velocidade.y = -75
+		velocidade.y = -75 * inversao
 	
 
-	velocidade = move_and_slide(velocidade, Vector2.UP)
+	
+	velocidade = move_and_slide(velocidade, Vector2(0, -1 * inversao))
 	#velocidade = move_and_slide(velocidade, Vector2(0,1))
 	#recarrega a cena apertando ESC
 	if(Input.is_action_just_pressed("ui_cancel")) :
