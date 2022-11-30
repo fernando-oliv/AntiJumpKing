@@ -7,7 +7,7 @@ var fallingTime = 0
 var falling = true
 var isFacingRight = true
 var vento = 0
-var inversao = 1
+var inversao = -1
 
 #bout dash 
 var dashDirection = Vector2(1,0)
@@ -19,7 +19,7 @@ var dashSpeed = 50
 var velocidadeAnterior = velocidade
 
 func _ready():
-	pass
+	self.position = Global.player_posicao_inicial
 
 
 

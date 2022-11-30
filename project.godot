@@ -11,7 +11,12 @@ config_version=4
 [application]
 
 config/name="Anti-Jump-King"
+run/main_scene="res://scenes/CenaTeste.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Global="*res://scripts/Global.gd"
 
 [display]
 
@@ -40,6 +45,7 @@ Dash={
 2d_physics/layer_1="player"
 2d_physics/layer_2="chao"
 2d_physics/layer_3="parede"
+2d_physics/layer_4="portal"
 
 [physics]
 
